@@ -68,15 +68,19 @@ const gameStart = () => {
     dealerHand.push(deck.pop())
 }
 
-const isThereAnAce = (array) => array.some(obj => obj.value === 11);
+const numberOfAces = (array) => array.filter(obj => obj.value === 11).length;
 
 const calculateScore = (array) => {
     let totalScore = 0;
     for (const obj of array) {
         totalScore += obj.value;
     }
-    if (isThereAnAce(array) && totalScore > 21) return totalScore - 10;
-    return totalScore;
+    const aceNumber = numberOfAces(array);
+    if (!aceNumber) return totalScore;
+    else {
+        if (totalScore - (aceNumber - 1) * 10 > 21) return totalScore - 10 * aceNumber;
+        return totalScore - (aceNumber - 1) * 10;
+    }
 }
 
 const dealerPlay = () => {
@@ -97,13 +101,24 @@ const renderReset = () => {
     resetBtn.innerHTML = `<button id="reset-button" type="button" class="btn btn-light py-1">Reset Game</button>`;
 }
 
-const determineWinner = () => {
-    const playerScore = calculateScore(playerHand);
-    const dealerScore = calculateScore(dealerHand);
-    if (playerScore > dealerScore) messageBox.innerText = "You Win!";
-    else if (dealerScore <= 21 && dealerScore > playerScore) messageBox.innerText = "Dealer Wins!";
-    else if (dealerScore > 21) messageBox.innerText = "You Win!";
-    else messageBox.innerText = "Push!";
+const determineWinner = (bust=false, autoWin=false) => {
+    if (bust) messageBox.innerText = "You Lose!";
+    else if (autoWin) messageBox.innerText = "You Win!";
+    else {
+        const playerScore = calculateScore(playerHand);
+        const dealerScore = calculateScore(dealerHand);
+        if (playerScore > dealerScore) messageBox.innerText = "You Win!";
+        else if (dealerScore <= 21 && dealerScore > playerScore) messageBox.innerText = "Dealer Wins!";
+        else if (dealerScore > 21) messageBox.innerText = "You Win!";
+        else messageBox.innerText = "Push!";
+    }
+}
+
+const finishGame = (bust=false, autoWin=false) => {
+    playerDone = true;
+    dealerPlay();
+    determineWinner(bust, autoWin);
+    renderReset();
 }
 
 // ============== EVENT LISTENERS =========================
@@ -120,12 +135,7 @@ dealBtn.addEventListener("click", () => {
         score = calculateScore(playerHand);
         playerPoints.innerHTML = `${score}`;
     }
-    if (score === 21) {
-        dealerPlay();
-        messageBox.innerText = "You Win!";
-        playerDone = true;
-        renderReset();
-    }
+    if (score === 21) finishGame(false, true);
 })
 
 hitBtn.addEventListener("click", () => {
@@ -136,26 +146,14 @@ hitBtn.addEventListener("click", () => {
         playerPoints.innerHTML = `${score}`;
         if (score > 21) {
             messageBox.innerText = "You Busted!";
-            playerDone = true;
-            dealerPlay();
-            messageBox.innerText = "You Lose!";
-            renderReset();
-        } else if (score === 21) {
-            dealerPlay();
-            messageBox.innerText = "You Win!";
-            playerDone = true;
-            renderReset();
-        }
+            finishGame(true);
+        } else if (score === 21) finishGame(false, true);
     }
 })
 
 standBtn.addEventListener("click", () => {
     playerDone = true;
-    if (dealerHand.length === 2 && !dealerDone) {
-        dealerPlay();
-        determineWinner();
-        renderReset();
-    }
+    if (dealerHand.length === 2 && !dealerDone) finishGame();
 })
 
 resetBtn.addEventListener("click", () => {
