@@ -9,6 +9,11 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
+    align-items: center;
+}
+
+#messages {
+    display: flex;
     justify-content: center;
     align-items: center;
 }
@@ -16,6 +21,14 @@
 .player {
     width: 90vw;
     height: 250px;
+}
+
+.points {
+    padding: 0 !important;
+}
+
+#messages {
+    height: 150px;
 }
 
 #dealer-hand, #player-hand {
