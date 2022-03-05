@@ -6,10 +6,11 @@ const messageBox = document.getElementById("messages");
 const dealBtn = document.getElementById("deal-button");
 const hitBtn = document.getElementById("hit-button");
 const standBtn = document.getElementById("stand-button");
+const resetBtn = document.querySelector(".reset");
 
-const deck = [];
-const dealerHand = [];
-const playerHand = [];
+let deck = [];
+let dealerHand = [];
+let playerHand = [];
 let playerDone = false;
 let dealerDone = false;
 
@@ -92,6 +93,10 @@ const dealerPlay = () => {
     dealerDone = true;
 }
 
+const renderReset = () => {
+    resetBtn.innerHTML = `<button id="reset-button" type="button" class="btn btn-light py-1">Reset Game</button>`;
+}
+
 const determineWinner = () => {
     const playerScore = calculateScore(playerHand);
     const dealerScore = calculateScore(dealerHand);
@@ -104,6 +109,7 @@ const determineWinner = () => {
 // ============== EVENT LISTENERS =========================
 
 dealBtn.addEventListener("click", () => {
+    let score;
     if (dealerHand.length === 0) {
         playerDone = false;
         gameStart();
@@ -111,7 +117,14 @@ dealBtn.addEventListener("click", () => {
         dealerDiv.innerHTML = `<img src=images/facedown_card.png>`;
         playerDiv.innerHTML += `<img src=${playerHand[1].url}>`;
         dealerDiv.innerHTML += `<img src=${dealerHand[1].url}>`;
-        playerPoints.innerHTML = `${calculateScore(playerHand)}`;
+        score = calculateScore(playerHand);
+        playerPoints.innerHTML = `${score}`;
+    }
+    if (score === 21) {
+        dealerPlay();
+        messageBox.innerText = "You Win!";
+        playerDone = true;
+        renderReset();
     }
 })
 
@@ -125,8 +138,13 @@ hitBtn.addEventListener("click", () => {
             messageBox.innerText = "You Busted!";
             playerDone = true;
             dealerPlay();
-            // determineWinner(true);
             messageBox.innerText = "You Lose!";
+            renderReset();
+        } else if (score === 21) {
+            dealerPlay();
+            messageBox.innerText = "You Win!";
+            playerDone = true;
+            renderReset();
         }
     }
 })
@@ -136,5 +154,19 @@ standBtn.addEventListener("click", () => {
     if (dealerHand.length === 2 && !dealerDone) {
         dealerPlay();
         determineWinner();
+        renderReset();
     }
+})
+
+resetBtn.addEventListener("click", () => {
+    deck = [];
+    dealerHand = [];
+    playerHand = [];
+    dealerDone = false;
+    playerDiv.innerHTML = "";
+    playerPoints.innerHTML = "";
+    dealerDiv.innerHTML = "";
+    dealerPoints.innerHTML = "";
+    resetBtn.innerHTML = "";
+    messageBox.innerText = "DC Blackjack"
 })
