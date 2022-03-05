@@ -13,6 +13,8 @@ let dealerHand = [];
 let playerHand = [];
 let playerDone = false;
 let dealerDone = false;
+let wins = 0;
+let losses = 0;
 
 const suits = ["clubs", "spades", "hearts", "diamonds"];
 const cards = [2, 3, 4, 5, 6, 7, 8, 9, 10, "jack", "queen", "king", "ace"];
@@ -102,14 +104,31 @@ const renderReset = () => {
 }
 
 const determineWinner = (bust=false, autoWin=false) => {
-    if (bust) messageBox.innerText = "You Lose!";
-    else if (autoWin) messageBox.innerText = "You Win!";
-    else {
+    if (bust) {
+        messageBox.innerText = "You Lose!";
+        losses++;
+        // update innerText of span tag
+    }
+    else if (autoWin) {
+        messageBox.innerText = "You Win!";
+        wins++;
+        // update innerText of span tag
+    } else {
         const playerScore = calculateScore(playerHand);
         const dealerScore = calculateScore(dealerHand);
-        if (playerScore > dealerScore) messageBox.innerText = "You Win!";
-        else if (dealerScore <= 21 && dealerScore > playerScore) messageBox.innerText = "Dealer Wins!";
-        else if (dealerScore > 21) messageBox.innerText = "You Win!";
+        if (playerScore > dealerScore) {
+            messageBox.innerText = "You Win!";
+            wins++;
+            // update innerText of span tag
+        } else if (dealerScore <= 21 && dealerScore > playerScore) {
+            messageBox.innerText = "Dealer Wins!";
+            losses++;
+            // update innerText of span tag
+        } else if (dealerScore > 21) {
+            messageBox.innerText = "You Win!";
+            wins++;
+            // update innerText of span tag
+        }
         else messageBox.innerText = "Push!";
     }
 }
