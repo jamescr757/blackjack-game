@@ -28,7 +28,7 @@
 }
 
 #messages {
-    height: 150px;
+    height: 120px;
 }
 
 #dealer-hand, #player-hand {
@@ -46,4 +46,23 @@
 .hand img {
     height: 95%;
     width: auto;
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+}
+
+#betAmountLabel {
+    min-width: 90px;
+    text-align: center;
+}
+
+.player-status {
+    display: flex;
+    justify-content: space-between;
+}
+
+#player-wins, #player-losses {
+    align-self: flex-end;
 }

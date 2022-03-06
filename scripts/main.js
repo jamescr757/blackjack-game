@@ -7,6 +7,11 @@ const dealBtn = document.getElementById("deal-button");
 const hitBtn = document.getElementById("hit-button");
 const standBtn = document.getElementById("stand-button");
 const resetBtn = document.querySelector(".reset");
+const betAmount = document.getElementById("betAmount");
+const wagerSpan = document.getElementById("wager");
+const playerChips = document.getElementById("player-chips");
+const playerWins = document.getElementById("player-wins");
+const playerLosses = document.getElementById("player-losses");
 
 let deck = [];
 let dealerHand = [];
@@ -15,6 +20,8 @@ let playerDone = false;
 let dealerDone = false;
 let wins = 0;
 let losses = 0;
+let chips = 1000;
+let wager = 50;
 
 const suits = ["clubs", "spades", "hearts", "diamonds"];
 const cards = [2, 3, 4, 5, 6, 7, 8, 9, 10, "jack", "queen", "king", "ace"];
@@ -64,6 +71,7 @@ const shuffleDeck = () => {
 const gameStart = () => {
     createDeck();
     shuffleDeck();
+    wager = parseInt(wagerSpan.innerText);
     playerHand.push(deck.pop())
     dealerHand.push(deck.pop())
     playerHand.push(deck.pop())
@@ -103,40 +111,50 @@ const renderReset = () => {
     resetBtn.innerHTML = `<button id="reset-button" type="button" class="btn btn-light py-1">Reset Game</button>`;
 }
 
-const determineWinner = (bust=false, autoWin=false) => {
+const determineWinner = (bust=false, blackjack=false) => {
     if (bust) {
         messageBox.innerText = "You Lose!";
         losses++;
-        // update innerText of span tag
+        chips -= wager;
+        playerChips.innerText = `Chips: ${chips}`;
+        playerLosses.innerText = `Losses: ${losses}`;
     }
-    else if (autoWin) {
+    else if (blackjack) {
         messageBox.innerText = "You Win!";
         wins++;
-        // update innerText of span tag
+        chips += wager * 1.5;
+        playerChips.innerText = `Chips: ${chips}`;
+        playerWins.innerText = `Wins: ${wins}`;
     } else {
         const playerScore = calculateScore(playerHand);
         const dealerScore = calculateScore(dealerHand);
         if (playerScore > dealerScore) {
             messageBox.innerText = "You Win!";
             wins++;
-            // update innerText of span tag
+            chips += wager;
+            playerChips.innerText = `Chips: ${chips}`;
+            playerWins.innerText = `Wins: ${wins}`;
         } else if (dealerScore <= 21 && dealerScore > playerScore) {
             messageBox.innerText = "Dealer Wins!";
             losses++;
-            // update innerText of span tag
+            chips -= wager;
+            playerChips.innerText = `Chips: ${chips}`;
+            playerLosses.innerText = `Losses: ${losses}`;
         } else if (dealerScore > 21) {
             messageBox.innerText = "You Win!";
             wins++;
-            // update innerText of span tag
+            chips += wager;
+            playerChips.innerText = `Chips: ${chips}`;
+            playerWins.innerText = `Wins: ${wins}`;
         }
         else messageBox.innerText = "Push!";
     }
 }
 
-const finishGame = (bust=false, autoWin=false) => {
+const finishGame = (bust=false, blackjack=false) => {
     playerDone = true;
     dealerPlay();
-    determineWinner(bust, autoWin);
+    determineWinner(bust, blackjack);
     renderReset();
 }
 
@@ -152,7 +170,7 @@ dealBtn.addEventListener("click", () => {
         playerDiv.innerHTML += `<img src=${playerHand[1].url}>`;
         dealerDiv.innerHTML += `<img src=${dealerHand[1].url}>`;
         score = calculateScore(playerHand);
-        playerPoints.innerHTML = `${score}`;
+        playerPoints.innerHTML = `Player: ${score}`;
     }
     if (score === 21) finishGame(false, true);
 })
@@ -162,7 +180,7 @@ hitBtn.addEventListener("click", () => {
         playerHand.push(deck.pop());
         playerDiv.innerHTML += `<img src=${playerHand.at(-1).url}>`;
         const score = calculateScore(playerHand);
-        playerPoints.innerHTML = `${score}`;
+        playerPoints.innerHTML = `Player: ${score}`;
         if (score > 21) {
             messageBox.innerText = "You Busted!";
             finishGame(true);
@@ -181,9 +199,13 @@ resetBtn.addEventListener("click", () => {
     playerHand = [];
     dealerDone = false;
     playerDiv.innerHTML = "";
-    playerPoints.innerHTML = "";
+    playerPoints.innerHTML = "Player:";
     dealerDiv.innerHTML = "";
     dealerPoints.innerHTML = "";
     resetBtn.innerHTML = "";
     messageBox.innerText = "DC Blackjack"
+})
+
+betAmount.addEventListener("click", event => {
+    wagerSpan.innerText = event.target.value;
 })
