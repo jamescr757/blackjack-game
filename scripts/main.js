@@ -20,7 +20,7 @@ let playerDone = false;
 let dealerDone = false;
 let wins = 0;
 let losses = 0;
-let chips = 1000;
+let chips = 500;
 let wager = 50;
 
 const suits = ["clubs", "spades", "hearts", "diamonds"];
@@ -162,7 +162,7 @@ const finishGame = (bust=false, blackjack=false) => {
 
 dealBtn.addEventListener("click", () => {
     let score;
-    if (dealerHand.length === 0) {
+    if (dealerHand.length === 0 && chips - wager >= 0) {
         playerDone = false;
         gameStart();
         playerDiv.innerHTML = `<img src=${playerHand[0].url}>`;
@@ -173,6 +173,7 @@ dealBtn.addEventListener("click", () => {
         playerPoints.innerHTML = `Player: ${score}`;
     }
     if (score === 21) finishGame(false, true);
+    if (chips <= 0) messageBox.innerText = "No more chips!";
 })
 
 hitBtn.addEventListener("click", () => {
@@ -208,4 +209,5 @@ resetBtn.addEventListener("click", () => {
 
 betAmount.addEventListener("click", event => {
     wagerSpan.innerText = event.target.value;
+    wager = parseInt(wagerSpan.innerText);
 })
