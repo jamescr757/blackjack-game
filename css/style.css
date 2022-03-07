@@ -1,10 +1,11 @@
 * {
     margin: 0;
     padding: 0;
+    color: white;
 }
 
 .table {
-    background-color: green;
+    background-color: black;
     width: 100vw;
     height: 100vh;
     display: flex;
@@ -34,7 +35,7 @@
 #dealer-hand, #player-hand {
     width: 100%;
     height: 100%;
-    background-color: yellowgreen;
+    background-color: green;
     overflow: scroll;
 }
 
@@ -54,7 +55,7 @@
 }
 
 #betAmountLabel {
-    min-width: 90px;
+    min-width: 130px;
     text-align: center;
 }
 
@@ -65,4 +66,28 @@
 
 #player-wins, #player-losses {
     align-self: flex-end;
+}
+
+button, span, label {
+    font-size: 1.5rem;
+}
+
+#dealer-hand {
+    margin-top: -2px;
+}
+
+#wager {
+    width: 70px;
+}
+
+#betAmount {
+    width: 120px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    background-color: green;
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+    background-color: green;
 }
